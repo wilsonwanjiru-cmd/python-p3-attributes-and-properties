@@ -1,62 +1,77 @@
 #!/usr/bin/env python3
 
-from person import Person
+from person import Person  # Import the Person class from person.py
 
 import io
 import sys
 
 class TestPerson:
-    '''Person in person.py'''
-
     def test_is_class(self):
         '''is a class with the name "Person".'''
         guido = Person(name='Guido', job='Sales')
-        assert(type(guido) == Person)
-        
+        assert isinstance(guido, Person)
+
     def test_name_not_empty(self):
-        '''prints "Name must be string between 1 and 25 characters." if empty string.'''
+        '''prints "Name must be a string between 1 and 25 characters." if empty string.'''
         captured_out = io.StringIO()
         sys.stdout = captured_out
-        Person(name="", job="Sales")
+        person = Person(name="", job="Sales")
         sys.stdout = sys.__stdout__
-        assert(captured_out.getvalue() == "Name must be string between 1 and 25 characters.\n")
+        assert captured_out.getvalue() == "Name must be a string between 1 and 25 characters.\n"
 
     def test_name_string(self):
-        '''prints "Name must be string between 1 and 25 characters." if not string.'''
+        '''prints "Name must be a string between 1 and 25 characters." if not a string.'''
         captured_out = io.StringIO()
         sys.stdout = captured_out
-        Person(name=123, job='Sales')
+        person = Person(name=123, job='Sales')
         sys.stdout = sys.__stdout__
-        assert(captured_out.getvalue() == "Name must be string between 1 and 25 characters.\n")
+        assert captured_out.getvalue() == "Name must be a string between 1 and 25 characters.\n"
 
-    def test_name_under_25(self):
-        '''prints "Name must be string between 1 and 25 characters." if string over 25 characters.'''
+    def test_name_length_over_25(self):
+        '''prints "Name must be a string under 25 characters." if name length is over 25.'''
         captured_out = io.StringIO()
         sys.stdout = captured_out
-        Person(name="What do Persons do on their day off? Can't lie around - that's their job.",
-               job='Sales')
+        person = Person(name="This is a very long name that exceeds 25 characters", job="Sales")
         sys.stdout = sys.__stdout__
-        assert(captured_out.getvalue() == "Name must be string between 1 and 25 characters.\n")
+        assert captured_out.getvalue() == "Name must be a string under 25 characters.\n"
 
     def test_valid_name(self):
         '''saves name if string between 1 and 25 characters.'''
         guido = Person("Guido")
-        assert(guido.name == "Guido")
+        assert guido.name == "Guido"
 
     def test_valid_name_title_case(self):
-        '''converts name to title case and saves if between 1 and 25 characters'''
+        '''converts name to title case and saves it if between 1 and 25 characters'''
         guido = Person(name="guido van rossum")
-        assert(guido.name == "Guido Van Rossum")
+        assert guido.name == "Guido Van Rossum"
 
     def test_job_not_in_list(self):
-        '''prints "Job must be in list of approved jobs." if not in job list.'''
+        '''prints "Job must be in list of approved jobs." if not in the job list.'''
         captured_out = io.StringIO()
         sys.stdout = captured_out
-        Person(job="Benevolent dictator for life")
+        person = Person(name="Alice", job="Pilot")
         sys.stdout = sys.__stdout__
-        assert(captured_out.getvalue() == "Job must be in list of approved jobs.\n")
+        assert captured_out.getvalue() == "Job must be in the list of approved jobs.\n"
+
+    def test_valid_job(self):
+        '''Does not print error message if job is valid.'''
+        captured_out = io.StringIO()
+        sys.stdout = captured_out
+        person = Person(name="Alice", job="Sales")
+        sys.stdout = sys.__stdout__
+        assert captured_out.getvalue() == ""
 
     def test_job_in_list(self):
-        '''saves job if in job list.'''
-        guido = Person(job="ITC")
-        assert(guido.job == "ITC")
+        '''saves job if in the job list.'''
+        guido = Person(job="Sales")
+        assert guido.job == "Sales"
+
+    def test_invalid_job(self):
+        '''prints "Job must be in the list of approved jobs." if the job is invalid.'''
+        captured_out = io.StringIO()
+        sys.stdout = captured_out
+        person = Person(name="Bob", job="InvalidJob")
+        sys.stdout = sys.__stdout__
+        assert captured_out.getvalue() == "Job must be in the list of approved jobs.\n"
+
+
